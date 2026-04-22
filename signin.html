@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KUET Gaming Club | Sign In</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body data-theme="dark" data-page="signin">
+    <div id="site-header"></div>
+
+    <main>
+      <section class="page-hero container">
+        <h1 class="reveal">Sign In</h1>
+        <p class="reveal">Access your club dashboard, event registrations, and team updates.</p>
+      </section>
+
+      <section class="section" style="padding-top: 1.2rem;">
+        <div class="container auth-shell">
+          <form class="form card auth-card reveal" novalidate>
+            <h2>Welcome Back</h2>
+            <p>Use your club account credentials to continue.</p>
+            <div>
+              <label for="signin-email">Email</label>
+              <input class="input" id="signin-email" name="email" type="email" placeholder="you@example.com" />
+            </div>
+            <div>
+              <label for="signin-password">Password</label>
+              <input class="input" id="signin-password" name="password" type="password" placeholder="Enter your password" />
+            </div>
+            <button class="btn btn-primary neon" type="submit">Sign In</button>
+            <p class="auth-helper">New member? <a href="signup.html">Create an account</a>.</p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="js/components.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
