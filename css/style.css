@@ -30,6 +30,9 @@ html {
 
 body {
   font-family: 'Poppins', sans-serif;
+  --page-bg-image: url('../assets/images/bg.jpg');
+  --page-bg-position: center;
+  --page-bg-opacity: 0.22;
   background:
     radial-gradient(circle at top, rgba(31, 140, 255, 0.15), transparent 38%),
     linear-gradient(160deg, rgba(4, 12, 24, 0.92), rgba(8, 20, 35, 0.82) 55%, rgba(6, 16, 30, 0.94));
@@ -48,6 +51,47 @@ body::before {
   background-size: 34px 34px;
   opacity: 0.22;
   z-index: -1;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--page-bg-image);
+  background-size: cover;
+  background-position: var(--page-bg-position);
+  background-repeat: no-repeat;
+  opacity: var(--page-bg-opacity);
+  filter: saturate(1.08) contrast(1.04);
+  z-index: -2;
+}
+
+body[data-page='home'] {
+  --page-bg-position: center top;
+  --page-bg-opacity: 0.27;
+}
+
+body[data-page='about'] {
+  --page-bg-position: right center;
+}
+
+body[data-page='events'] {
+  --page-bg-position: 62% center;
+}
+
+body[data-page='members'] {
+  --page-bg-position: center 18%;
+}
+
+body[data-page='achievements'] {
+  --page-bg-position: 52% 24%;
+}
+
+body[data-page='signin'],
+body[data-page='signup'] {
+  --page-bg-position: center center;
+  --page-bg-opacity: 0.2;
 }
 
 a {
