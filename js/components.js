@@ -5,7 +5,7 @@ const navLinks = [
   { href: 'events.html', label: 'Events' },
   { href: 'gallery.html', label: 'Gallery' },
   { href: 'contact.html', label: 'Contact' },
-  { href: 'achievements.html', label: 'Achievement' },
+  { href: 'achievement.html', label: 'Achievement' },
   { href: 'signin.html', label: 'Sign In', auth: true }
 ];
 
