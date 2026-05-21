@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; }
+  body { background: transparent; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+resize();
+window.addEventListener('resize', resize);
+
+const W = () => canvas.width, H = () => canvas.height;
+let t = 0;
+const START = performance.now();
+const DURATION = 7000;
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+function easeInOut(t) { return t < 0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+const particles = [];
+for (let i = 0; i < 60; i++) {
+  const angle = Math.random() * Math.PI * 2;
+  const r = 95 + Math.random() * 55;
+  particles.push({
+    angle,
+    r,
+    speed: (0.4 + Math.random() * 0.6) * (Math.random() > 0.5 ? 1 : -1),
+    size: 1 + Math.random() * 2.5,
+    alpha: 0.3 + Math.random() * 0.7,
+    trail: [],
+    color: Math.random() > 0.4 ? '#00cfff' : '#ffffff',
+    orbitOffset: Math.random() * Math.PI * 2
+  });
+}
+
+const rings = [
+  { r: 92, width: 1.5, speed: 0.3, dash: [8, 6], phase: 0, color: '#00cfff', alpha: 0.5 },
+  { r: 112, width: 1, speed: -0.2, dash: [4, 10], phase: 1, color: '#0077ff', alpha: 0.35 },
+  { r: 130, width: 2, speed: 0.15, dash: [16, 4], phase: 2, color: '#00cfff', alpha: 0.2 },
+];
+
+const bgStars = [];
+for (let i = 0; i < 90; i++) {
+  bgStars.push({ x: Math.random()*W(), y: Math.random()*H(), r: Math.random()*1.2, a: Math.random() });
+}
+
+function drawFrame(now) {
+  const width = W();
+  const height = H();
+  const elapsed = now - START;
+  const prog = clamp(elapsed / DURATION, 0, 1);
+  t = prog;
+
+  ctx.clearRect(0, 0, width, height);
+
+  const bg = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, Math.max(width, height) * 0.9);
+  bg.addColorStop(0, '#0a0a1a');
+  bg.addColorStop(0.5, '#050510');
+  bg.addColorStop(1, '#000008');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  const starAlpha = easeOut(clamp(prog * 3, 0, 1));
+  bgStars.forEach(s => {
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(180,210,255,${s.a * starAlpha * 0.6})`;
+    ctx.fill();
+  });
+
+  if (prog > 0.05) {
+    const gridA = easeOut(clamp((prog - 0.05) * 4, 0, 1)) * 0.08;
+    ctx.save();
+    ctx.strokeStyle = `rgba(0, 160, 255, ${gridA})`;
+    ctx.lineWidth = 0.5;
+    for (let gx = 0; gx < width; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, height); ctx.stroke();
+    }
+    for (let gy = 0; gy < height; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(width, gy); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  let zoom = 1;
+  if (prog < 0.7) zoom = lerp(0.85, 1.05, easeInOut(prog / 0.7));
+  else zoom = lerp(1.05, 1.0, easeInOut((prog - 0.7) / 0.3));
+
+  ctx.save();
+  ctx.translate(width/2, height/2);
+  ctx.scale(zoom, zoom);
+  ctx.translate(-width/2, -height/2);
+
+  const cx = width/2, cy = height/2 - 10;
+
+  const spinPhase = clamp(prog / 0.28, 0, 1);
+  const spinProgress = easeInOut(spinPhase);
+  let scaleX = 1;
+  if (spinPhase < 1) {
+    const angle = spinProgress * Math.PI * 2.5;
+    scaleX = Math.cos(angle);
+  }
+
+  const glowA = easeOut(clamp(prog * 2, 0, 1));
+  const glowR = ctx.createRadialGradient(cx, cy, 0, cx, cy, 140);
+  glowR.addColorStop(0, `rgba(0, 140, 255, ${0.18 * glowA})`);
+  glowR.addColorStop(0.5, `rgba(0, 80, 200, ${0.1 * glowA})`);
+  glowR.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glowR;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 140, 0, Math.PI*2);
+  ctx.fill();
+
+  const ringA = easeOut(clamp((prog - 0.15) * 3, 0, 1));
+  if (ringA > 0) {
+    rings.forEach(ring => {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(elapsed * 0.001 * ring.speed + ring.phase);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, ring.r, ring.r * 0.28, 0, 0, Math.PI*2);
+      ctx.strokeStyle = ring.color;
+      ctx.globalAlpha = ring.alpha * ringA;
+      ctx.lineWidth = ring.width;
+      ctx.setLineDash(ring.dash);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  const partA = easeOut(clamp((prog - 0.1) * 2.5, 0, 1));
+  if (partA > 0) {
+    particles.forEach(p => {
+      p.angle += p.speed * 0.012;
+      const px = cx + Math.cos(p.angle) * p.r;
+      const py = cy + Math.sin(p.angle) * p.r * 0.28;
+      p.trail.push({ x: px, y: py });
+      if (p.trail.length > 18) p.trail.shift();
+
+      for (let i = 0; i < p.trail.length - 1; i++) {
+        const ta = (i / p.trail.length) * p.alpha * partA * 0.6;
+        ctx.beginPath();
+        ctx.moveTo(p.trail[i].x, p.trail[i].y);
+        ctx.lineTo(p.trail[i+1].x, p.trail[i+1].y);
+        ctx.strokeStyle = p.color;
+        ctx.globalAlpha = ta;
+        ctx.lineWidth = p.size * 0.6;
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(px, py, p.size * 0.8, 0, Math.PI*2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha * partA;
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  const emblA = easeOut(clamp(prog * 4, 0, 1));
+  const emblR = 70;
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(scaleX, 1);
+
+  const lightX = scaleX * emblR * 0.4;
+
+  ctx.beginPath();
+  ctx.arc(0, 0, emblR + 6, 0, Math.PI*2);
+  ctx.strokeStyle = `rgba(0, 180, 255, ${0.7 * emblA})`;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++) {
+    const a = (i * Math.PI/3) - Math.PI/6;
+    const hx = Math.cos(a) * emblR, hy = Math.sin(a) * emblR;
+    i === 0 ? ctx.moveTo(hx, hy) : ctx.lineTo(hx, hy);
+  }
+  ctx.closePath();
+
+  const hexGrad = ctx.createLinearGradient(-emblR + lightX, -emblR, emblR + lightX, emblR);
+  hexGrad.addColorStop(0, `rgba(0, 20, 60, ${0.95 * emblA})`);
+  hexGrad.addColorStop(0.3, `rgba(0, 40, 100, ${0.95 * emblA})`);
+  hexGrad.addColorStop(0.5 + scaleX * 0.2, `rgba(0, 80, 180, ${0.9 * emblA})`);
+  hexGrad.addColorStop(0.7, `rgba(0, 30, 80, ${0.95 * emblA})`);
+  hexGrad.addColorStop(1, `rgba(0, 10, 40, ${0.95 * emblA})`);
+  ctx.fillStyle = hexGrad;
+  ctx.fill();
+  ctx.strokeStyle = `rgba(0, 200, 255, ${0.8 * emblA})`;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  if (emblA > 0.3) {
+    ctx.save();
+    ctx.clip();
+    const glossGrad = ctx.createLinearGradient(lightX - 30, -emblR, lightX + 10, 0);
+    glossGrad.addColorStop(0, `rgba(255,255,255,${0.25 * emblA})`);
+    glossGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = glossGrad;
+    ctx.fillRect(-emblR, -emblR, emblR*2, emblR*2);
+    ctx.restore();
+  }
+
+  if (emblA > 0.05 && Math.abs(scaleX) > 0.05) {
+    ctx.save();
+    ctx.scale(1 / (scaleX || 0.001) * scaleX, 1);
+    ctx.font = 'bold 36px Arial Black, Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = '#00cfff';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = `rgba(200, 240, 255, ${emblA})`;
+    ctx.fillText('KGC', 0, 0);
+    ctx.shadowBlur = 8;
+    ctx.fillStyle = `rgba(255, 255, 255, ${emblA})`;
+    ctx.fillText('KGC', 0, 0);
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+
+  ctx.restore();
+
+  if (prog > 0.3) {
+    const lineA = easeOut(clamp((prog - 0.3) * 4, 0, 1));
+    const lineW = lerp(0, 220, easeOut(clamp((prog - 0.3) * 5, 0, 1)));
+    ctx.save();
+    ctx.globalAlpha = lineA * 0.8;
+    const lineGrad = ctx.createLinearGradient(cx - lineW, cy + 85, cx + lineW, cy + 85);
+    lineGrad.addColorStop(0, 'rgba(0,180,255,0)');
+    lineGrad.addColorStop(0.5, '#00cfff');
+    lineGrad.addColorStop(1, 'rgba(0,180,255,0)');
+    ctx.strokeStyle = lineGrad;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx - lineW, cy + 85);
+    ctx.lineTo(cx + lineW, cy + 85);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  if (prog > 0.45) {
+    const textA = easeOut(clamp((prog - 0.45) * 3.5, 0, 1));
+    ctx.save();
+    ctx.globalAlpha = textA;
+
+    ctx.font = '700 22px "Arial Narrow", Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = '#0088ff';
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = '#aaddff';
+    ctx.fillText('KUET GAMING CLUB', cx, cy + 105);
+    ctx.shadowBlur = 6;
+    ctx.fillStyle = '#ddf2ff';
+    ctx.fillText('KUET GAMING CLUB', cx, cy + 105);
+    ctx.shadowBlur = 0;
+
+    const dotSpacing = 135;
+    [[cx - dotSpacing, cy + 105], [cx + dotSpacing, cy + 105]].forEach(([dx, dy]) => {
+      ctx.beginPath();
+      ctx.arc(dx, dy, 2, 0, Math.PI*2);
+      ctx.fillStyle = '#00cfff';
+      ctx.shadowColor = '#00cfff';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    ctx.font = '400 10.5px Arial, sans-serif';
+    ctx.fillStyle = `rgba(100, 180, 255, ${textA * 0.85})`;
+    ctx.shadowColor = '#0066cc';
+    ctx.shadowBlur = 6;
+    ctx.fillText('Khulna University of Engineering & Technology', cx, cy + 130);
+    ctx.shadowBlur = 0;
+
+    ctx.restore();
+  }
+
+  ctx.restore();
+  requestAnimationFrame(drawFrame);
+}
+
+requestAnimationFrame(drawFrame);
+</script>
+</body>
+</html>

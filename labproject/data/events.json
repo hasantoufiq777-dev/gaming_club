@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Neon Clash Invitational",
+    "game": "Valorant",
+    "date": "May 18, 2026",
+    "description": "5v5 tactical showdown featuring top campus squads with live shoutcasting and MVP awards."
+  },
+  {
+    "title": "Campus Ultimate Team Cup",
+    "game": "FIFA",
+    "date": "May 25, 2026",
+    "description": "Head-to-head elimination bracket where players build squads and compete in high-pressure finals."
+  },
+  {
+    "title": "Battle Royale Scrims",
+    "game": "PUBG",
+    "date": "June 3, 2026",
+    "description": "Custom room practice series focused on strategy, rotations, and end-zone execution for club players."
+  },
+  {
+    "title": "KUET LAN Night",
+    "game": "Valorant",
+    "date": "June 12, 2026",
+    "description": "Community LAN event with mini challenges, mixed teams, and coaching sessions from senior members."
+  },
+  {
+    "title": "Weekend Open Lobby",
+    "game": "PUBG",
+    "date": "June 22, 2026",
+    "description": "Open community match where newcomers can squad up with core members and learn competitive play."
+  },
+  {
+    "title": "FIFA Pro Qualifier",
+    "game": "FIFA",
+    "date": "July 6, 2026",
+    "description": "Qualification rounds to select KUET representatives for inter-university esports competition."
+  }
+]
