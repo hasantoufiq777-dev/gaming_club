@@ -1,0 +1,30 @@
+# Visual Studio files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build output
+bin/
+obj/
+out/
+
+# NuGet packages (restore on build)
+packages/*/
+
+# Keep packages.config
+!packages.config
+
+# Compiled files
+*.dll
+*.pdb
+*.exe
+*.cache
+
+# Logs
+*.log
+
+# Windows
+Thumbs.db
+Desktop.ini

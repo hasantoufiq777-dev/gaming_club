@@ -17,5 +17,34 @@ namespace labproject
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
+
+        protected void Application_AcquireRequestState(object sender, EventArgs e)
+        {
+            if (Context?.Session == null || Context.Request == null)
+            {
+                return;
+            }
+
+            if (Session["UserEmail"] != null)
+            {
+                return;
+            }
+
+            HttpCookie authCookie = Request.Cookies["KGCAuth"];
+            if (authCookie == null || string.IsNullOrWhiteSpace(authCookie.Value))
+            {
+                return;
+            }
+
+            string[] parts = authCookie.Value.Split('|');
+            if (parts.Length < 2)
+            {
+                return;
+            }
+
+            Session["UserEmail"] = Uri.UnescapeDataString(parts[0]);
+            Session["IsAuthenticated"] = true;
+            Session["IsAdmin"] = parts[1] == "1";
+        }
     }
 }

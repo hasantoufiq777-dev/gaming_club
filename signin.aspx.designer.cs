@@ -11,6 +11,7 @@ namespace labproject
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         protected global::System.Web.UI.WebControls.TextBox signinEmail;
         protected global::System.Web.UI.WebControls.TextBox signinPassword;
+        protected global::System.Web.UI.WebControls.CheckBox chkRememberMe;
         protected global::System.Web.UI.WebControls.Label lblMessage;
         protected global::System.Web.UI.WebControls.Button btnSignIn;
     }

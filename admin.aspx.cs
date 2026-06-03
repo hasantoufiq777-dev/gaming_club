@@ -2,6 +2,7 @@ using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web;
 using System.Web.UI;
 
 namespace labproject
@@ -9,10 +10,6 @@ namespace labproject
     public partial class admin : Page
     {
         private string ConnectionString => ConfigurationManager.ConnectionStrings["KUETDbConnection"].ConnectionString;
-
-        private string AdminEmail => ConfigurationManager.AppSettings["AdminEmail"];
-
-        private string AdminPassword => ConfigurationManager.AppSettings["AdminPassword"];
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -38,12 +35,32 @@ namespace labproject
             var email = txtAdminEmail.Text.Trim();
             var password = txtAdminPassword.Text;
 
-            if (email.Equals(AdminEmail, StringComparison.OrdinalIgnoreCase) && password == AdminPassword)
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                Session["IsAdmin"] = true;
-                Session["AdminEmail"] = email;
-                Response.Redirect("admin.aspx");
-                return;
+                string query = "SELECT COUNT(1) FROM Users WHERE Email=@Email AND PasswordHash=@PasswordHash AND IsAdmin=1";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    cmd.Parameters.AddWithValue("@PasswordHash", password);
+
+                    try
+                    {
+                        conn.Open();
+                        int count = Convert.ToInt32(cmd.ExecuteScalar());
+                        if (count == 1)
+                        {
+                            Session["IsAdmin"] = true;
+                            Session["AdminEmail"] = email;
+                            Response.Redirect("admin.aspx");
+                            return;
+                        }
+                    }
+                    catch (SqlException)
+                    {
+                        // database error; show invalid credentials below to avoid leaking details
+                    }
+                }
             }
 
             lblMessage.Text = "Invalid admin credentials.";
@@ -66,6 +83,7 @@ namespace labproject
 
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
+
                 string query = "INSERT INTO Users (FullName, Email, PasswordHash) VALUES (@FullName, @Email, @PasswordHash)";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -109,6 +127,7 @@ namespace labproject
         {
             Session.Remove("IsAdmin");
             Session.Remove("AdminEmail");
+            ClearAuthCookie();
             Response.Redirect("admin.aspx");
         }
 
@@ -152,6 +171,15 @@ namespace labproject
             return Session["IsAdmin"] != null && Convert.ToBoolean(Session["IsAdmin"]);
         }
 
+        private void ClearAuthCookie()
+        {
+            var cookie = new HttpCookie("KGCAuth")
+            {
+                Expires = DateTime.UtcNow.AddDays(-1)
+            };
+            Response.Cookies.Add(cookie);
+        }
+
         private void BindUsers()
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
@@ -175,5 +203,6 @@ namespace labproject
                 }
             }
         }
+
     }
 }

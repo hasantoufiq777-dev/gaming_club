@@ -31,6 +31,9 @@
               <label for="signinPassword">Password</label>
               <asp:TextBox class="input" id="signinPassword" runat="server" TextMode="Password" placeholder="Enter your password"></asp:TextBox>
             </div>
+            <div style="display:flex; align-items:center; gap:0.5rem; margin:0.75rem 0 0.25rem;">
+              <asp:CheckBox ID="chkRememberMe" runat="server" Text="Remember me" />
+            </div>
             <asp:Label ID="lblMessage" runat="server" ForeColor="Red"></asp:Label>
             <br/>
             <asp:Button class="btn btn-primary neon" ID="btnSignIn" runat="server" Text="Sign In" OnClick="btnSignIn_Click" />
