@@ -222,6 +222,21 @@ img {
   position: relative;
 }
 
+.nav-auth-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-auth-email {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .profile-wrap {
   position: relative;
 }

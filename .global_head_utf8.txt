@@ -25,9 +25,8 @@ namespace labproject
                 return;
             }
 
-            if (Session["UserEmail"] != null || Request.Cookies["KGCAuth"] == null)
+            if (Session["UserEmail"] != null)
             {
-                SyncClientAuthCookie();
                 return;
             }
 
@@ -46,28 +45,7 @@ namespace labproject
             Session["UserEmail"] = Uri.UnescapeDataString(parts[0]);
             Session["IsAuthenticated"] = true;
             Session["IsAdmin"] = parts[1] == "1";
-
-            SyncClientAuthCookie();
-        }
-
-        private void SyncClientAuthCookie()
-        {
-            if (Session["IsAuthenticated"] == null || !Convert.ToBoolean(Session["IsAuthenticated"]))
-            {
-                return;
-            }
-
-            string email = Convert.ToString(Session["UserEmail"]);
-            bool isAdmin = Session["IsAdmin"] != null && Convert.ToBoolean(Session["IsAdmin"]);
-
-            HttpCookie clientCookie = new HttpCookie("KGCAuthUI")
-            {
-                Path = "/",
-                HttpOnly = false,
-                Value = string.Join("|", new[] { Uri.EscapeDataString(email ?? string.Empty), isAdmin ? "1" : "0" })
-            };
-
-            Response.Cookies.Add(clientCookie);
         }
     }
 }
+

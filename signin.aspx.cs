@@ -48,14 +48,9 @@ namespace labproject
                                 // if conversion fails, ignore and continue
                             }
 
-                            if (chkRememberMe.Checked)
-                            {
-                                SetAuthCookie(signinEmail.Text, Session["IsAdmin"] != null && Convert.ToBoolean(Session["IsAdmin"]));
-                            }
-                            else
-                            {
-                                ClearAuthCookie();
-                            }
+                            bool isAdmin = Session["IsAdmin"] != null && Convert.ToBoolean(Session["IsAdmin"]);
+                            SetAuthCookie(signinEmail.Text, isAdmin, chkRememberMe.Checked);
+                            SetClientAuthCookie(signinEmail.Text, isAdmin, chkRememberMe.Checked);
 
                             Response.Redirect("Default.aspx"); // Or wherever you want them to go
                         }
@@ -72,15 +67,19 @@ namespace labproject
             }
         }
 
-        private void SetAuthCookie(string email, bool isAdmin)
+        private void SetAuthCookie(string email, bool isAdmin, bool persistent)
         {
             var cookie = new HttpCookie("KGCAuth")
             {
+                Path = "/",
                 HttpOnly = true,
                 Value = string.Join("|", new[] { Uri.EscapeDataString(email ?? string.Empty), isAdmin ? "1" : "0" })
             };
 
-            cookie.Expires = DateTime.UtcNow.AddDays(7);
+            if (persistent)
+            {
+                cookie.Expires = DateTime.UtcNow.AddDays(7);
+            }
 
             if (Request.IsSecureConnection)
             {
@@ -90,12 +89,20 @@ namespace labproject
             Response.Cookies.Add(cookie);
         }
 
-        private void ClearAuthCookie()
+        private void SetClientAuthCookie(string email, bool isAdmin, bool persistent)
         {
-            var cookie = new HttpCookie("KGCAuth")
+            var cookie = new HttpCookie("KGCAuthUI")
             {
-                Expires = DateTime.UtcNow.AddDays(-1)
+                Path = "/",
+                HttpOnly = false,
+                Value = string.Join("|", new[] { Uri.EscapeDataString(email ?? string.Empty), isAdmin ? "1" : "0" })
             };
+
+            if (persistent)
+            {
+                cookie.Expires = DateTime.UtcNow.AddDays(7);
+            }
+
             Response.Cookies.Add(cookie);
         }
     }
