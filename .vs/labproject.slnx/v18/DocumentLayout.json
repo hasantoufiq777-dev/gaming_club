@@ -1,36 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\User\\source\\repos\\labproject\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{CE84A8DD-F4D1-43C8-A6EC-33A6F86204AE}|labproject.csproj|c:\\users\\user\\source\\repos\\labproject\\assets\\images\\bg.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}",
-      "RelativeMoniker": "D:0:0:{CE84A8DD-F4D1-43C8-A6EC-33A6F86204AE}|labproject.csproj|solutionrelative:assets\\images\\bg.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "bg.jpg - Bitmap [639x360, 24 bit, JPG]",
-              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\labproject\\assets\\images\\bg.jpg",
-              "RelativeDocumentMoniker": "assets\\images\\bg.jpg",
-              "ToolTip": "C:\\Users\\User\\source\\repos\\labproject\\assets\\images\\bg.jpg - Bitmap [639x360, 24 bit, JPG]",
-              "RelativeToolTip": "assets\\images\\bg.jpg - Bitmap [639x360, 24 bit, JPG]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
-              "WhenOpened": "2026-06-03T15:34:26.223Z",
-              "EditorCaption": " - Bitmap [639x360, 24 bit, JPG]"
-            }
-          ]
-        }
-      ]
+      "DocumentGroups": []
     }
   ]
 }

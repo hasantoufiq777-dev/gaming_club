@@ -84,6 +84,7 @@
                   <h3>Current Users</h3>
                 </div>
                 <div class="admin-table-wrap">
+                  <asp:HiddenField ID="hfEditName" runat="server" ClientIDMode="Static" />
                   <asp:Repeater ID="rptUsers" runat="server" OnItemCommand="rptUsers_ItemCommand">
                     <HeaderTemplate>
                       <table class="admin-table">
@@ -103,6 +104,7 @@
                             <td><%# Eval("Email") %></td>
                             <td>Stored in DB</td>
                             <td>
+                              <asp:Button class="btn btn-ghost" ID="btnEditUser" runat="server" Text="Edit" CommandName="EditUser" CommandArgument='<%# Eval("Email") %>' OnClientClick="return promptEditUser(this);" />
                               <asp:Button class="btn btn-danger" ID="btnDeleteUser" runat="server" Text="Delete" CommandName="DeleteUser" CommandArgument='<%# Eval("Email") %>' OnClientClick="return confirm('Delete this user?');" />
                             </td>
                           </tr>
@@ -128,5 +130,24 @@
 
     <script src="js/components.js"></script>
     <script src="js/main.js"></script>
+    <script>
+      function promptEditUser(btn) {
+        try {
+          var row = btn && btn.closest ? btn.closest('tr') : null;
+          var fullName = '';
+          if (row && row.cells && row.cells.length > 0) {
+            fullName = row.cells[0].innerText || row.cells[0].textContent || '';
+            fullName = fullName.trim();
+          }
+          var newName = prompt('Edit full name', fullName || '');
+          if (newName === null) return false; // cancelled
+          var hf = document.getElementById('hfEditName');
+          if (hf) hf.value = newName;
+          return true; // allow postback
+        } catch (e) {
+          return false;
+        }
+      }
+    </script>
   </body>
 </html>

@@ -133,34 +133,74 @@ namespace labproject
 
         protected void rptUsers_ItemCommand(object source, System.Web.UI.WebControls.RepeaterCommandEventArgs e)
         {
-            if (!IsAdminAuthenticated() || !string.Equals(e.CommandName, "DeleteUser", StringComparison.OrdinalIgnoreCase))
+            if (!IsAdminAuthenticated())
             {
                 return;
             }
 
+            string command = e.CommandName ?? string.Empty;
             string email = Convert.ToString(e.CommandArgument);
 
-            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            if (string.Equals(command, "DeleteUser", StringComparison.OrdinalIgnoreCase))
             {
-                string query = "DELETE FROM Users WHERE Email=@Email";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
                 {
-                    cmd.Parameters.AddWithValue("@Email", email);
+                    string query = "DELETE FROM Users WHERE Email=@Email";
 
-                    try
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        conn.Open();
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                        cmd.Parameters.AddWithValue("@Email", email);
 
-                        lblMessage.Text = rowsAffected > 0 ? "User deleted successfully." : "No matching user was found.";
-                        lblMessage.ForeColor = rowsAffected > 0 ? System.Drawing.Color.LightGreen : System.Drawing.Color.Gold;
-                        BindUsers();
+                        try
+                        {
+                            conn.Open();
+                            int rowsAffected = cmd.ExecuteNonQuery();
+
+                            lblMessage.Text = rowsAffected > 0 ? "User deleted successfully." : "No matching user was found.";
+                            lblMessage.ForeColor = rowsAffected > 0 ? System.Drawing.Color.LightGreen : System.Drawing.Color.Gold;
+                            BindUsers();
+                        }
+                        catch (SqlException ex)
+                        {
+                            lblMessage.Text = "Error: " + ex.Message;
+                            lblMessage.ForeColor = System.Drawing.Color.Red;
+                        }
                     }
-                    catch (SqlException ex)
+                }
+            }
+            else if (string.Equals(command, "EditUser", StringComparison.OrdinalIgnoreCase))
+            {
+                // Read new name from hidden field set by client-side prompt
+                string newFullName = Request.Form["hfEditName"];
+                if (string.IsNullOrWhiteSpace(newFullName))
+                {
+                    lblMessage.Text = "Name cannot be empty.";
+                    lblMessage.ForeColor = System.Drawing.Color.Gold;
+                    return;
+                }
+
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
+                {
+                    string query = "UPDATE Users SET FullName=@FullName WHERE Email=@Email";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        lblMessage.Text = "Error: " + ex.Message;
-                        lblMessage.ForeColor = System.Drawing.Color.Red;
+                        cmd.Parameters.AddWithValue("@FullName", newFullName.Trim());
+                        cmd.Parameters.AddWithValue("@Email", email);
+
+                        try
+                        {
+                            conn.Open();
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            lblMessage.Text = rowsAffected > 0 ? "User updated successfully." : "No matching user was found.";
+                            lblMessage.ForeColor = rowsAffected > 0 ? System.Drawing.Color.LightGreen : System.Drawing.Color.Gold;
+                            BindUsers();
+                        }
+                        catch (SqlException ex)
+                        {
+                            lblMessage.Text = "Error: " + ex.Message;
+                            lblMessage.ForeColor = System.Drawing.Color.Red;
+                        }
                     }
                 }
             }
