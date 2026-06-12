@@ -23,8 +23,8 @@
           <h2 class="section-title reveal">President</h2>
           <div class="cards" style="margin-bottom: 1.6rem;">
             <article class="card member-card reveal">
-              <div class="member-media"><img src="" alt="President portrait" /></div>
-              <h3></h3>
+              <div class="member-media"><img src="assets/images/club%20president.jpg" alt="Ahmed Shafi - President portrait" /></div>
+              <h3>Ahmed Shafi</h3>
               <p class="member-role">President</p>
               <p>Leads club strategy, partnerships, and tournament planning.</p>
             </article>
@@ -33,20 +33,20 @@
           <h2 class="section-title reveal">Core Team</h2>
           <div class="cards" style="margin-bottom: 1.6rem;">
             <article class="card member-card reveal">
-              <div class="member-media"><img src="" alt="Core team member" /></div>
-              <h3></h3>
+              <div class="member-media"><img src="assets/images/coreteam1.png" alt="Ashrafur Rahman - Core team member" /></div>
+              <h3>Ashrafur Rahman</h3>
               <p class="member-role">Event Coordinator</p>
               <p>Designs event flow, schedules, and participant operations.</p>
             </article>
             <article class="card member-card reveal">
-              <div class="member-media"><img src="" alt="Core team member" /></div>
-              <h3></h3>
+              <div class="member-media"><img src="assets/images/coreteamm2.jpg" alt="Shahriar Imon - Core team member" /></div>
+              <h3>Shahriar Imon</h3>
               <p class="member-role">Tech Lead</p>
               <p>Handles livestream setup, score systems, and digital content.</p>
             </article>
             <article class="card member-card reveal">
-              <div class="member-media"><img src="" alt="Core team member" /></div>
-              <h3></h3>
+              <div class="member-media"><img src="assets/images/coreteam3.jpg" alt="Mehedi Hasan - Core team member" /></div>
+              <h3>Mehedi Hasan</h3>
               <p class="member-role">Community Manager</p>
               <p>Runs communication channels and drives member engagement.</p>
             </article>
@@ -55,20 +55,20 @@
           <h2 class="section-title reveal">Players</h2>
           <div class="cards">
             <article class="card member-card reveal">
-              <div class="member-media"><img src="" alt="Player portrait" /></div>
-              <h3></h3>
+              <div class="member-media"><img src="assets/images/valorentplyer.jpg" alt="Shomik Shahrirar - Valorant Player" /></div>
+              <h3>Shomik Shahrirar</h3>
               <p class="member-role">Valorant Player</p>
               <p>Entry fragger with sharp aim and aggressive pacing.</p>
             </article>
             <article class="card member-card reveal">
-              <div class="member-media"><img src="" alt="Player portrait" /></div>
-              <h3></h3>
+              <div class="member-media"><img src="assets/images/pubgplayer.jpg" alt="Sabbir Hossain - PUBG IGL" /></div>
+              <h3>Sabbir Hossain</h3>
               <p class="member-role">PUBG IGL</p>
               <p>Tactical leader specializing in rotations and final-circle calls.</p>
             </article>
             <article class="card member-card reveal">
-              <div class="member-media"><img src="" alt="Player portrait" /></div>
-              <h3></h3>
+              <div class="member-media"><img src="assets/images/fifaplayer.jpg" alt="Shahriar Abdullah - FIFA Specialist" /></div>
+              <h3>Shahriar Abdullah</h3>
               <p class="member-role">FIFA Specialist</p>
               <p>Possession-heavy style and elite finishing under pressure.</p>
             </article>

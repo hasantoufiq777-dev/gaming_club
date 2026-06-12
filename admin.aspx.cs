@@ -59,7 +59,7 @@ namespace labproject
                     catch (SqlException)
                     {
                         // database error; show invalid credentials below to avoid leaking details
-                    }
+                    }  
                 }
             }
 
